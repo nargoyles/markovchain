@@ -27,12 +27,15 @@ def newtext (dup_dict, sentances):
     seed_word, next_word = words[seed], words[seed+1]
     w1, w2 = seed_word, next_word
     new_text = []
-    for i in range(sentances-1):
+    sentance_counter = 0
+    while sentance_counter<sentances:
         new_text.append(w1)
         w3 = w1
         w1 = w2
         #embed()
         w2 = random.choice(dup_dict[(w3, w2)])
+        if "." in w2 or "!" in w2 or "?" in w2:
+            sentance_counter+=1
     new_text.append(w2)
     #print possibilities
     print ' '.join(new_text)
