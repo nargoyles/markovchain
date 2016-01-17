@@ -19,12 +19,12 @@ def states (words):
     for word in range(total):
         dup_dict[words[word], words[word+1]].append(words[word+2])
         if "." in words[word] or "!" in words[word] or "?" in words[word]:
-            seedlist.append(words[word+1])
+            seedlist.append([words[word+1], words[word+2]])
 
 def newtext (dup_dict, sentances):
-    seed = random.randint(0, len(words)-3)
+    seed = random.randint(0, len(seedlist))
     #print seed
-    seed_word, next_word = words[seed], words[seed+1]
+    seed_word, next_word = seedlist[seed][0], seedlist[seed][1]
     w1, w2 = seed_word, next_word
     new_text = []
     sentance_counter = 0
