@@ -2,13 +2,19 @@ import random
 import string
 from IPython import embed
 from collections import defaultdict
+import os
 
 possibilities = {}
 seedlist = []
-dup_dict = defaultdict(list)
+good = defaultdict(list)
+better = defaultdict(list)
+best = defaultdict(list)
 
-def readintxt ():
-    novel = open("novel.txt", "r", 1)
+def readintxt (text):
+    if text == 1:
+        novel = open("novel.txt", "r", 1)
+    elif text == 2:
+        novel = open("Lyrics.txt", "r", 1)
     novel.seek(0)
     words = novel.read()
     words = words.split()
@@ -17,30 +23,60 @@ def readintxt ():
 def states (words):
     total = len(words) - 3
     for word in range(total):
-        dup_dict[words[word], words[word+1]].append(words[word+2])
+        good[words[word]].append(words[word+1])
+        better[words[word], words[word+1]].append(words[word+2])
+        best[words[word], words[word+1], words[word+2]].append(words[word+3])
         if "." in words[word] or "!" in words[word] or "?" in words[word]:
-            seedlist.append([words[word+1], words[word+2]])
+            seedlist.append([words[word+1], words[word+2], words[word+3]])
 
-def newtext (dup_dict, sentances):
+def newtext (good, better, best, readability, sentances):
     seed = random.randint(0, len(seedlist))
-    #print seed
-    seed_word, next_word = seedlist[seed][0], seedlist[seed][1]
-    w1, w2 = seed_word, next_word
-    new_text = []
-    sentance_counter = 0
-    while sentance_counter<sentances:
+    if readability == 1:
+        w1 = seedlist[seed][0]
+        new_text = []
+        sentance_counter = 0
+        while sentance_counter<sentances:
+            new_text.append(w1)
+            w2 = w1
+            w1 = random.choice(good[(w2)])
+            if "." in w1 or "!" in w1 or "?" in w1:
+                sentance_counter+=1
         new_text.append(w1)
-        w3 = w1
-        w1 = w2
-        #embed()
-        w2 = random.choice(dup_dict[(w3, w2)])
-        if "." in w2 or "!" in w2 or "?" in w2:
-            sentance_counter+=1
-    new_text.append(w2)
-    #print possibilities
-    print ' '.join(new_text)
+        print ' '.join(new_text)
+    elif readability == 2:
+        w1, w2 = seedlist[seed][0], seedlist[seed][1]
+        new_text = []
+        sentance_counter = 0
+        while sentance_counter<sentances:
+            new_text.append(w1)
+            w3 = w1
+            w1 = w2
+            w2 = random.choice(better[(w3, w2)])
+            if "." in w2 or "!" in w2 or "?" in w2:
+                sentance_counter+=1
+        new_text.append(w2)
+        print ' '.join(new_text)
+    elif readability == 3:
+        w1, w2, w3 = seedlist[seed][0], seedlist[seed][1], seedlist[seed][2]
+        new_text = []
+        sentance_counter = 0
+        while sentance_counter<sentances:
+            new_text.append(w1)
+            w4 = w1
+            w1 = w2
+            w2 = w3
+            w3 = random.choice(best[(w4, w1, w2)])
+            if "." in w2 or "!" in w2 or "?" in w2:
+                sentance_counter+=1
+        new_text.append(w2), new_text.append(w3)
+        print ' '.join(new_text)
 
-words = readintxt()
+os.system('cls' if os.name == 'nt' else 'clear')
+text = input("Choose what text to use.\n1: My 2015 Nanowrimo novel, 'Yes, There Might be Some Hurting'\n2: Lyrics from songs I've written\n")
+words = readintxt(text)
 states(words)
-sentances = input("How many words to sentances?")
-newtext(dup_dict,sentances)
+os.system('cls' if os.name == 'nt' else 'clear')
+readability = input("Choose the level of readability.\n1: Gibberish\n2: Less gibberishy\n3: Close to the real deal \n")
+os.system('cls' if os.name == 'nt' else 'clear')
+sentances = input("How many sentances?\n")
+newtext(good, better, best, readability, sentances)
