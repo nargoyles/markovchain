@@ -1,8 +1,8 @@
 import random
 import string
-from IPython import embed
 from collections import defaultdict
 import os
+import textwrap
 
 possibilities = {}
 seedlist = []
@@ -37,39 +37,43 @@ def newtext (good, better, best, readability, sentances):
         sentance_counter = 0
         while sentance_counter<sentances:
             new_text.append(w1)
-            w2 = w1
-            w1 = random.choice(good[(w2)])
             if "." in w1 or "!" in w1 or "?" in w1:
                 sentance_counter+=1
-        new_text.append(w1)
-        print ' '.join(new_text)
+            w2 = w1
+            w1 = random.choice(good[(w2)])
+        os.system('cls' if os.name == 'nt' else 'clear')
+        markovchain = ' '.join(new_text)
+        print textwrap.fill(markovchain, 75)
     elif readability == 2:
         w1, w2 = seedlist[seed][0], seedlist[seed][1]
         new_text = []
         sentance_counter = 0
         while sentance_counter<sentances:
             new_text.append(w1)
+            if "." in w1 or "!" in w1 or "?" in w1:
+                sentance_counter+=1
             w3 = w1
             w1 = w2
             w2 = random.choice(better[(w3, w2)])
-            if "." in w2 or "!" in w2 or "?" in w2:
-                sentance_counter+=1
-        new_text.append(w2)
-        print ' '.join(new_text)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        markovchain = ' '.join(new_text)
+        print textwrap.fill(markovchain, 75)
     elif readability == 3:
         w1, w2, w3 = seedlist[seed][0], seedlist[seed][1], seedlist[seed][2]
         new_text = []
         sentance_counter = 0
         while sentance_counter<sentances:
             new_text.append(w1)
+            if "." in w1 or "!" in w1 or "?" in w1:
+                sentance_counter+=1
             w4 = w1
             w1 = w2
             w2 = w3
             w3 = random.choice(best[(w4, w1, w2)])
-            if "." in w2 or "!" in w2 or "?" in w2:
-                sentance_counter+=1
-        new_text.append(w2), new_text.append(w3)
-        print ' '.join(new_text)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        markovchain = ' '.join(new_text)
+        print textwrap.fill(markovchain, 75)
+
 
 os.system('cls' if os.name == 'nt' else 'clear')
 text = input("Choose what text to use.\n1: My 2015 Nanowrimo novel, 'Yes, There Might be Some Hurting'\n2: Lyrics from songs I've written\n")
